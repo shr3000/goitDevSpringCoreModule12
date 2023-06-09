@@ -1,25 +1,34 @@
 package note;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.stereotype.Service;
 
-public class CrudServiceNote {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+@Service
+public class NoteService {
     private Map<Long, Note> notes = new HashMap<>();
-    public void add(Note note) {
+
+    public Note add(Note note) {
         Long id = note.getId();
         if (notes.containsKey(id)) {
             throw new IllegalArgumentException("Note already exists");
         } else {
-            notes.put(getMaxId() + 1, note);
+            id = getMaxId() + 1;
+            note.setId(id);
+            notes.put(id, note);
         }
+        return note;
     }
-    public void delete(Long id) {
+
+    public void deleteById(long id) {
         if (!notes.containsKey(id)) {
             throw new IllegalArgumentException("Note not found");
         } else {
             notes.remove(id);
         }
     }
+
     public void update(Note note) {
         Long id = note.getId();
         if (!notes.containsKey(id)) {
@@ -28,9 +37,11 @@ public class CrudServiceNote {
             notes.put(id, note);
         }
     }
-    public Map<Long, Note> getAll() {
-        return notes;
+
+    public List<Note> listAll() {
+        return notes.values().stream().toList();
     }
+
     public Note getById(Long id) {
         if (!notes.containsKey(id)) {
             throw new IllegalArgumentException("Note not found");
